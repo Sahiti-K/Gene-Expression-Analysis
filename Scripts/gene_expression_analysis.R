@@ -42,9 +42,17 @@ volcano_plot <- ggplot(data, aes(x = log2FoldChange, y = logP, color = status)) 
   geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
   geom_hline(yintercept = -log10(0.01), linetype = "dashed") +
   theme_minimal() +
-  labs(title = "Volcano Plot", x = "Log2 Fold Change", y = "-log10(p-value)")
+  labs(
+    title = "Volcano Plot",
+    x = "Log2 Fold Change",
+    y = "-log10(p-value)"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5)  # Center the title
+  )
 
-ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5)
+# Save with white background
+ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5, bg = "white")
 
 # Filter for significant genes
 up_genes <- subset(data, log2FoldChange > 1 & pvalue < 0.01)
@@ -71,3 +79,4 @@ print(summary_table)
 
 # Save to file
 write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+
