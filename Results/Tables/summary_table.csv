@@ -1,0 +1,6 @@
+"Upregulated_Gene","Up_Log2FC","Up_Pvalue","Downregulated_Gene","Down_Log2FC","Down_Pvalue"
+"DTHD1",1.54,5.59e-05,"TBX5",-2.129,5.66e-08
+"EMILIN2",1.534,2.98e-06,"IFITM1",-1.687,3.74e-06
+"PI16",1.495,0.00013,"TNN",-1.658,8.97e-06
+"C4orf45",1.288,0.000247,"COL13A1",-1.647,1.39e-05
+"FAM180B",1.249,0.00115,"IFITM3",-1.61,1.2e-05

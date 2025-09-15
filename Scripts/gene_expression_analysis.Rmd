@@ -1,0 +1,154 @@
+---
+title: "Different Gene Expression Analysis"
+author: "Sahiti K"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+```
+
+# Abstract
+
+Differential gene expression analysis identifies genes that are significantly up regulated or down regulated between experimental conditions. This report analyzes a published dataset, classifies genes based on fold change and p-value thresholds, and visualizes results using a volcano plot.\
+The top regulated genes are summarized in a tabular format to highlight potential biological significance.
+
+# Workflow
+
+### *Data Source*
+
+### 1. Load Data
+
+Read the file from the given URL. It is white space-separated, so we set `sep = ""`.
+
+```{r}
+data <- read.table(
+  "https://gist.githubusercontent.com/stephenturner/806e31fce55a8b7175af/raw/1a507c4c3f9f1baaa3a69187223ff3d3050628d4/results.txt",
+  header = TRUE,
+  sep = "",
+  stringsAsFactors = FALSE
+)
+
+# Inspect structure and first few rows
+str(data)
+head(data)
+```
+
+### *Data Pre-processing*
+
+### 2. Add Derived Columns
+
+-   Compute `-log10(pvalue)` for volcano plot.
+
+-   Transform p-values to –log₁₀(p) to amplify significance, making key genes stand out at the top of the volcano plot.
+
+-   Add a classification column (`Up`, `Down`, or `Not Significant`).
+
+```{r}
+data$logP <- -log10(data$pvalue)
+
+# Default classification
+data$status <- "Not Significant"
+data$status[data$log2FoldChange > 1 & data$pvalue < 0.01] <- "Up"
+data$status[data$log2FoldChange < -1 & data$pvalue < 0.01] <- "Down"
+
+head(data)
+```
+
+### 3. Save Updated Tables
+
+```{r}
+# Save all genes
+write.csv(data, "classified_gene_expression.csv", row.names = FALSE)
+
+# Save only significant genes
+sig_data <- subset(data, status != "Not Significant")
+write.csv(sig_data, "significant_genes.csv", row.names = FALSE)
+```
+
+# Results
+
+## 4. Volcano Plot
+
+Significant genes highlighted in **red** (Up), **blue** (Down), and grey otherwise.
+
+```{r}
+volcano_plot <- ggplot(data, aes(x = log2FoldChange, y = logP, color = status)) +
+  geom_point(alpha = 0.8) +
+  scale_color_manual(values = c("Down" = "blue", "Not Significant" = "grey", "Up" = "red")) +
+  geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
+  geom_hline(yintercept = -log10(0.01), linetype = "dashed") +
+  theme_minimal() +
+  labs(title = "Volcano Plot", x = "Log2 Fold Change", y = "-log10(p-value)")
+
+volcano_plot
+
+# Save to file
+ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5)
+```
+
+## 5. Top Genes Summary Table
+
+We extract the **top 5 up regulated** and **top 5 down regulated** genes.
+
+```{r}
+# Filter
+up_genes <- subset(data, log2FoldChange > 1 & pvalue < 0.01)
+down_genes <- subset(data, log2FoldChange < -1 & pvalue < 0.01)
+
+# Sort
+# Top 5 upregulated genes (largest positive log2FC)
+top5_up <- head(up_genes[order(-up_genes$log2FoldChange), ], 5)
+
+# Top 5 downregulated genes (most negative log2FC)
+top5_down <- head(down_genes[order(down_genes$log2FoldChange), ], 5)
+
+# Create summary
+summary_table <- data.frame(
+  Upregulated_Gene = top5_up$Gene,
+  Up_Log2FC = round(top5_up$log2FoldChange, 3),
+  Up_Pvalue = signif(top5_up$pvalue, 3),
+  Downregulated_Gene = top5_down$Gene,
+  Down_Log2FC = round(top5_down$log2FoldChange, 3),
+  Down_Pvalue = signif(top5_down$pvalue, 3)
+)
+
+# Make a table with a title
+knitr::kable(summary_table, caption = "Top 5 Upregulated and Downregulated Genes")
+
+# Save to file
+write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+```
+
+# Discussion
+
+The biological significance of the top genes, interpreted using **GeneCards**.
+
+## Up regulated genes
+
+| Genes | Functions |
+|:---|:---|
+| DTHD1 | Encodes a protein with a death domain; Involved in signaling and apoptosis pathways. |
+| EMILIN2 | Extracellular matrix protein; promotes angiogenesis, defense response, and platelet aggregation. |
+| PI16 | Peptidase inhibitor; regulates cardiac muscle cell growth; active in extracellular space. |
+| C4orf45 | Also known as SPMIP2; associated with Hyperekplexia; sperm microtubule inner protein. |
+| FAM180B | Predicted to be located in the extracellular region. |
+
+: **Functional summary of top 5 upregulated genes**
+
+## Down regulated genes
+
+| Genes | Functions |
+|:---|:---|
+| TBX5 | T-box transcription factor; key role in heart and limb development; linked to Holt-Oram syndrome. |
+| IFITM1 | Interferon-induced antiviral protein; blocks viral entry (e.g., influenza, Ebola, SARS-CoV-2 |
+| TNN | Integrin-binding protein; regulates angiogenesis, cell adhesion, and migration |
+| COL13A1 | Nonfibrillar collagen with transmembrane domain; may support general connective tissue function. |
+| IFITM3 | Interferon-induced antiviral protein; restricts viral entry across multiple pathogens. |
+
+: **Functional summary of top 5 downregulated genes**
+
+These functional annotations provide biological meaning to the statistical findings and help generate hypotheses for further laboratory validation.
