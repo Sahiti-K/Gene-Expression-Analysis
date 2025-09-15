@@ -91,6 +91,7 @@ volcano_plot <- ggplot(data, aes(x = log2FoldChange, y = logP, color = status)) 
   theme(
     plot.title = element_text(hjust = 0.5)  # Center the title
   )
+volcano_plot
 
 # Save with white background
 ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5, bg = "white")
@@ -159,4 +160,5 @@ The biological significance of the top genes, interpreted using **GeneCards**.
 : **Functional summary of top 5 downregulated genes**
 
 These functional annotations provide biological meaning to the statistical findings and help generate hypotheses for further laboratory validation.
+
 
