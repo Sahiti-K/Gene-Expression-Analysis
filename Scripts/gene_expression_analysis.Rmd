@@ -76,18 +76,25 @@ write.csv(sig_data, "significant_genes.csv", row.names = FALSE)
 Significant genes highlighted in **red** (Up), **blue** (Down), and grey otherwise.
 
 ```{r}
+# 3. Volcano plot
 volcano_plot <- ggplot(data, aes(x = log2FoldChange, y = logP, color = status)) +
   geom_point(alpha = 0.8) +
-  scale_color_manual(values = c("Down" = "blue", "Not Significant" = "grey", "Up" = "red")) +
+  scale_color_manual(values = c("blue", "grey", "red")) +
   geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
   geom_hline(yintercept = -log10(0.01), linetype = "dashed") +
   theme_minimal() +
-  labs(title = "Volcano Plot", x = "Log2 Fold Change", y = "-log10(p-value)")
+  labs(
+    title = "Volcano Plot",
+    x = "Log2 Fold Change",
+    y = "-log10(p-value)"
+  ) +
+  theme(
+    plot.title = element_text(hjust = 0.5)  # Center the title
+  )
 
-volcano_plot
+# Save with white background
+ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5, bg = "white")
 
-# Save to file
-ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5)
 ```
 
 ## 5. Top Genes Summary Table
@@ -152,3 +159,4 @@ The biological significance of the top genes, interpreted using **GeneCards**.
 : **Functional summary of top 5 downregulated genes**
 
 These functional annotations provide biological meaning to the statistical findings and help generate hypotheses for further laboratory validation.
+
