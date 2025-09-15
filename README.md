@@ -52,10 +52,6 @@ rmarkdown::render("gene_expression_analysis.Rmd")
 | `LICENSE`   | Usage terms |
 
 
-
-## Author
-Sahiti Krishnasetty
-
 ## References
 Stelzer, G., et al. (2016). The GeneCards Suite: From Gene Data Mining to Disease Genome Sequence Analyses. Current Protocols in Bioinformatics, 54(1).
 
