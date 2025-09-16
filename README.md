@@ -1,4 +1,4 @@
-# Gene Expression Analysis — R Project 🧬  
+# Gene Expression Analysis: R Project 
 
 **Project: DumbDeseq — RNA Expression Software**  
 *Processed RNA-seq dataset from quantitated gene expression data.*  
