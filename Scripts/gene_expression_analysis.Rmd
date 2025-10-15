@@ -45,7 +45,7 @@ head(data)
 
 -   Transform p-values to –log₁₀(p) to amplify significance, making key genes stand out at the top of the volcano plot.
 
--   Add a classification column (`Up`, `Down`, or `Not Significant`).
+-   Add a classification column (`Up`, `Down`, or `Neutral`).
 
 ```{r}
 data$logP <- -log10(data$pvalue)
@@ -154,6 +154,7 @@ The biological significance of the top genes, interpreted using **GeneCards**.
 : **Functional summary of top 5 downregulated genes**
 
 These functional annotations provide biological meaning to the statistical findings and help generate hypotheses for further laboratory validation.
+
 
 
 
