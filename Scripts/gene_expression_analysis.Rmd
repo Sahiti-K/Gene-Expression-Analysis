@@ -8,7 +8,6 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(ggplot2)
 ```
 
 # Abstract
@@ -154,6 +153,7 @@ The biological significance of the top genes, interpreted using **GeneCards**.
 : **Functional summary of top 5 downregulated genes**
 
 These functional annotations provide biological meaning to the statistical findings and help generate hypotheses for further laboratory validation.
+
 
 
 
