@@ -23,9 +23,6 @@ data$status <- "Neutral"  # default
 data$status[data$log2FoldChange > 1 & data$pvalue < 0.01] <- "Up"
 data$status[data$log2FoldChange < -1 & data$pvalue < 0.01] <- "Down"
 
-# 3. Save updated table
-write.csv(data, "classified_gene_expression.csv", row.names = FALSE)
-
 # Save only significant genes
 sig_data <- subset(data, status != "Neutral")
 write.csv(sig_data, "significant_genes.csv", row.names = FALSE)
@@ -39,7 +36,7 @@ cols <- c("Down"="blue", "Neutral"="grey", "Up"="red")
 # Open a PDF device
 pdf("volcano_plot.pdf", width = 7, height = 5)  # size in inches
 
-# 3. Volcano plot
+# Volcano plot
 plot(
   data$log2FoldChange, data$logP,
   col = adjustcolor(cols[data$status]),
@@ -80,5 +77,6 @@ print(summary_table)
 
 # Save to file
 write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+
 
 
