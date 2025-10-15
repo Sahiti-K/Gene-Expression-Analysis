@@ -19,7 +19,7 @@ head(data)
 data$logP <- -log10(data$pvalue)
 
 # Classify genes based on fold change and p-value
-data$status <- "Not Significant"  # default
+data$status <- "Neutral"  # default
 data$status[data$log2FoldChange > 1 & data$pvalue < 0.01] <- "Up"
 data$status[data$log2FoldChange < -1 & data$pvalue < 0.01] <- "Down"
 
@@ -27,32 +27,33 @@ data$status[data$log2FoldChange < -1 & data$pvalue < 0.01] <- "Down"
 write.csv(data, "classified_gene_expression.csv", row.names = FALSE)
 
 # Save only significant genes
-sig_data <- subset(data, status != "Not Sig")
+sig_data <- subset(data, status != "Neutral")
 write.csv(sig_data, "significant_genes.csv", row.names = FALSE)
 
 # Optional: Preview first few rows
 head(data)
 
-library(ggplot2)
+# Colors
+cols <- c("Down"="blue", "Neutral"="grey", "Up"="red")
+
+# Open a PDF device
+pdf("volcano_plot.pdf", width = 7, height = 5)  # size in inches
 
 # 3. Volcano plot
-volcano_plot <- ggplot(data, aes(x = log2FoldChange, y = logP, color = status)) +
-  geom_point(alpha = 0.8) +
-  scale_color_manual(values = c("blue", "grey", "red")) +
-  geom_vline(xintercept = c(-1, 1), linetype = "dashed") +
-  geom_hline(yintercept = -log10(0.01), linetype = "dashed") +
-  theme_minimal() +
-  labs(
-    title = "Volcano Plot",
-    x = "Log2 Fold Change",
-    y = "-log10(p-value)"
-  ) +
-  theme(
-    plot.title = element_text(hjust = 0.5)  # Center the title
-  )
+plot(
+  data$log2FoldChange, data$logP,
+  col = adjustcolor(cols[data$status]),
+  pch = 16, cex = 0.8,
+  xlab = "Log2 Fold Change", ylab = "-log10(p-value)",
+  main = "Volcano Plot"
+)
+abline(v=c(-1,1), lty=3)
+abline(h=-log10(0.01), lty=3)
+legend("topright", legend=names(cols), col=cols, pch=16,
+       cex=0.7, pt.cex=0.7, bty="o")
 
-# Save with white background
-ggsave("volcano_plot.png", volcano_plot, width = 7, height = 5, bg = "white")
+# Close the device
+dev.off()
 
 # Filter for significant genes
 up_genes <- subset(data, log2FoldChange > 1 & pvalue < 0.01)
@@ -79,4 +80,5 @@ print(summary_table)
 
 # Save to file
 write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+
 
