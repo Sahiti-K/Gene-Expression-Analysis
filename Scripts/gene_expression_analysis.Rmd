@@ -61,12 +61,11 @@ head(data)
 ### 3. Save Updated Tables
 
 ```{r}
-# Save all genes
-write.csv(data, "classified_gene_expression.csv", row.names = FALSE)
 
 # Save only significant genes
 sig_data <- subset(data, status != "Neutral")
 write.csv(sig_data, "significant_genes.csv", row.names = FALSE)
+
 ```
 
 # Results
@@ -155,6 +154,7 @@ The biological significance of the top genes, interpreted using **GeneCards**.
 : **Functional summary of top 5 downregulated genes**
 
 These functional annotations provide biological meaning to the statistical findings and help generate hypotheses for further laboratory validation.
+
 
 
 
