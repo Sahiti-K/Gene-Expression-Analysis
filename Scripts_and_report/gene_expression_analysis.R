@@ -19,7 +19,7 @@ head(data)
 data$logP <- -log10(data$pvalue)
 
 # Classify genes based on fold change and p-value
-data$status <- "Neutral"  # default
+data$status <- "Neutral"  # default - not significant
 data$status[data$log2FoldChange > 1 & data$pvalue < 0.01] <- "Up"
 data$status[data$log2FoldChange < -1 & data$pvalue < 0.01] <- "Down"
 
@@ -77,6 +77,7 @@ print(summary_table)
 
 # Save to file
 write.csv(summary_table, "summary_table.csv", row.names = FALSE)
+
 
 
 
